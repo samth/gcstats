@@ -1,0 +1,67 @@
+Install as follows:
+
+% git clone ...
+% raco link gcstats
+% raco setup gcstats
+
+Run as follows:
+
+% racket -t gcstats normal-racket-arguments
+
+Output:
+
+  2,715,625,408 bytes allocated in the heap
+
+> How many bytes, total, were allocated by the program
+
+  2,687,494,428 bytes collected by GC
+
+> How many bytes, total, were collected during the run of the program
+
+     73,728,640 bytes max heap size
+
+> The largest heap size observed at any GC
+
+     66,748,764 bytes max slop
+
+> The largest difference between the memory allocated and the memory
+  the GC has servered.
+
+     85,884,928 bytes peak total memory use
+
+> The largest total memory use, including GC overhead.
+
+Generation 0:     147 collections,    1,120ms, 1,157.53ms elapsed
+
+> How many nursery collections there were, and how long they took, in
+  both process and elapsed time.
+
+Generation 1:       6 collections,      596ms,   605.63ms elapsed
+
+> How many major collections there were, and how long they took, in
+  both process and elapsed time.
+
+INIT  time       260 ms
+
+> Time spent in the process prior to the logging happening.  This is primarily Racket startup time, and code loading time.
+
+MUT   time     8,996 ms (  9,038.51 ms elapsed)
+
+> How much time the "mutator", i.e. your program, was running.
+
+GC    time     1,716 ms (  1,763.16 ms elapsed)
+
+> How much time the GC took.
+
+TOTAL time    10,972 ms ( 11,061.67 ms elapsed)
+
+> The total time from the initial invocation.
+
+%GC time       16.02%   ( 16.32% elapsed)
+
+> What percentage of the time (after initialization) was spent in GC.
+
+Alloc rate     301,870,321 bytes per MUT second
+
+> The average rate of allocation, not counting GC time.
+

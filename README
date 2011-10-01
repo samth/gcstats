@@ -1,6 +1,6 @@
 Install as follows:
 
-% git clone ...
+% git clone git://github.com/samth/gcstats.git
 % raco link gcstats
 % raco setup gcstats
 

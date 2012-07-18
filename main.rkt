@@ -31,6 +31,8 @@
                                  [v (in-value (vector-ref e 2))]
                                  #:when (gc-info? v))
                        v))
+  (unless (pair? gc-results)
+    (error "no results"))
   
   (define num-major (for/sum ([e gc-results] #:when (gc-info-major? e)) 1))
   (define num-minor (for/sum ([e gc-results] #:unless (gc-info-major? e)) 1))
@@ -105,8 +107,12 @@
 
 (define (f v)
   (define results (stop-recording l))
-  (newline) (newline)
-  (display (summarize results (current-process-milliseconds) (current-inexact-milliseconds)))
-  (old-handler v))
+  (cond [(null? results)
+         (printf "No GC results available\n")
+         (old-handler v)]
+        [else
+         (newline) (newline)
+         (display (summarize results (current-process-milliseconds) (current-inexact-milliseconds)))
+         (old-handler v)]))
 
 (executable-yield-handler f)

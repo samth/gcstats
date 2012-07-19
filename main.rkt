@@ -7,11 +7,17 @@
     (λ ()
       (letrec-values 
           ([(L) (λ ()
-                (define-values (v) (sync reciever))
-                (if (eq? 'gc-info (prefab-struct-key (vector-ref v 2)))
-                    (set-box! buf (cons v (unbox buf)))
-                    (void))
-                (L))])
+                  (define-values (v) (sync reciever))
+                  (if (eq? 'gc-info (prefab-struct-key (vector-ref v 2)))
+                      (set-box! buf (cons v (unbox buf)))
+                      (void))
+                  (L))])
         (L))))
   (thread handler)
-  ((dynamic-require 'gcstats/core 'continue) buf initial-times))
+  (executable-yield-handler
+   (let-values ([(old-eyh) (executable-yield-handler)])
+     (λ (v)
+       ((dynamic-require 'gcstats/core 'continue) 
+        buf initial-times 
+        (cons (current-process-milliseconds) (current-inexact-milliseconds)))
+       (old-eyh v)))))

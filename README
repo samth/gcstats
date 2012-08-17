@@ -6,7 +6,15 @@ Install as follows:
 
 Run as follows:
 
-% racket -t gcstats normal-racket-arguments
+% racket -l gcstats normal-racket-arguments
+
+For example:
+
+% racket -l gcstats -t "foo.rkt"
+
+or
+
+% racket -l gcstats -l drracket
 
 Output:
 

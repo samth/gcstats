@@ -40,6 +40,7 @@ GC    time     1,716 ms (  1,763.16 ms elapsed)
 TOTAL time    10,972 ms ( 11,061.67 ms elapsed)
 
 %GC time       16.02%   ( 16.32% elapsed)
+
 Alloc rate     301,870,321 bytes per MUT second
 ```
 
@@ -51,7 +52,9 @@ Alloc rate     301,870,321 bytes per MUT second
 
 How many bytes, total, were allocated by the program
 
+```
   2,687,494,428 bytes collected by GC
+```
 
 How many bytes, total, were collected during the run of the program
 

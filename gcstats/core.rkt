@@ -82,7 +82,11 @@
   (define major-gc-elapsed-time
     (for/sum ([i (in-list gc-results)] #:when (gc-info-major? i))
       (- (gc-info-end-time i) (gc-info-start-time i))))
-  
+
+  (define max-gc-pause
+    (for/fold ([mx 0]) ([i (in-list gc-results)])
+      (max mx (- (gc-info-end-time i) (gc-info-start-time i)))))
+
   (define gc-time (+ minor-gc-time major-gc-time))
   (define gc-elapsed-time (+ minor-gc-elapsed-time major-gc-elapsed-time))
   
@@ -119,7 +123,8 @@
            (->string (+ startup-time total-time) 10)
            (->string (+ startup-time total-elapsed-time) 10))
    "\n"
-   (format "%GC time  ~a%   (~a% elapsed)\n"
+   (format "Max pause time: ~a ms\n" (->string max-gc-pause 10))
+   (format "%GC time        ~a %   (~a % elapsed)\n"
            (->string gc% 10) (->string gc-elapsed% 6))
    "\n"
    (format "Alloc rate     ~a bytes per MUT second\n"

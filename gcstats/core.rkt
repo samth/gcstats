@@ -1,10 +1,13 @@
 #lang s-exp racket/private/base
 
-(struct gc-info (major? pre-amount pre-admin-amount code-amount
+(struct gc-info (mode pre-amount pre-admin-amount code-amount
                  post-amount post-admin-amount
                  start-process-time end-process-time
                  start-time end-time)
   #:prefab)
+
+(define (gc-info-major? e) (eq? 'major (gc-info-mode e)))
+(define (gc-info-minor? e) (eq? 'minor (gc-info-mode e)))
 
 (define initial-times #f)
 
@@ -37,7 +40,7 @@
     (error "no results"))
   
   (define num-major (for/sum ([e gc-results] #:when (gc-info-major? e)) 1))
-  (define num-minor (for/sum ([e gc-results] #:unless (gc-info-major? e)) 1))
+  (define num-minor (for/sum ([e gc-results] #:when (gc-info-minor? e)) 1))
   
   (define allocated (+ 
                      (gc-info-pre-amount (car gc-results))
@@ -70,10 +73,10 @@
   (define total-elapsed-time (- end-time (cdr initial-times)))
   
   (define minor-gc-time
-    (for/sum ([i (in-list gc-results)] #:unless (gc-info-major? i))
+    (for/sum ([i (in-list gc-results)] #:when (gc-info-minor? i))
       (- (gc-info-end-process-time i) (gc-info-start-process-time i))))
   (define minor-gc-elapsed-time 
-    (for/sum ([i (in-list gc-results)] #:unless (gc-info-major? i))
+    (for/sum ([i (in-list gc-results)] #:when (gc-info-minor? i))
       (- (gc-info-end-time i) (gc-info-start-time i))))
   
   (define major-gc-time 

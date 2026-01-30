@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        racket-version: ['current', '8.14', '8.10']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Bogdanp/setup-racket@v1.11
+        with:
+          version: ${{ matrix.racket-version }}
+      - name: Install package
+        run: raco pkg install --auto --name gcstats
+      - name: Run tests
+        run: raco test gcstats

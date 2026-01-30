@@ -8,6 +8,7 @@
 
   (define (gc-info-major? e) (eq? 'major (gc-info-mode e)))
   (define (gc-info-minor? e) (eq? 'minor (gc-info-mode e)))
+  (define (gc-info-inc? e) (eq? 'incremental (gc-info-mode e)))
 
   (define initial-times #f)
 
@@ -41,6 +42,7 @@
 
     (define num-major (for/sum ([e (in-list gc-results)] #:when (gc-info-major? e)) 1))
     (define num-minor (for/sum ([e (in-list gc-results)] #:when (gc-info-minor? e)) 1))
+    (define num-incremental (for/sum ([e (in-list gc-results)] #:when (gc-info-inc? e)) 1))
 
     (define allocated (+
                        (gc-info-pre-amount (car gc-results))
@@ -86,12 +88,19 @@
       (for/sum ([i (in-list gc-results)] #:when (gc-info-major? i))
         (- (gc-info-end-time i) (gc-info-start-time i))))
 
+    (define inc-gc-time
+      (for/sum ([i (in-list gc-results)] #:when (gc-info-inc? i))
+        (- (gc-info-end-process-time i) (gc-info-start-process-time i))))
+    (define inc-gc-elapsed-time
+      (for/sum ([i (in-list gc-results)] #:when (gc-info-inc? i))
+        (- (gc-info-end-time i) (gc-info-start-time i))))
+
     (define max-gc-pause
       (for/fold ([mx 0]) ([i (in-list gc-results)])
         (max mx (- (gc-info-end-time i) (gc-info-start-time i)))))
 
-    (define gc-time (+ minor-gc-time major-gc-time))
-    (define gc-elapsed-time (+ minor-gc-elapsed-time major-gc-elapsed-time))
+    (define gc-time (+ minor-gc-time major-gc-time inc-gc-time))
+    (define gc-elapsed-time (+ minor-gc-elapsed-time major-gc-elapsed-time inc-gc-elapsed-time))
 
     (define mut-time (- total-time gc-time))
     (define mut-elapsed-time (- total-elapsed-time gc-elapsed-time))
@@ -114,6 +123,9 @@
      (format "Generation 1:~a collections, ~ams, ~ams elapsed\n"
              (->string num-major) (->string major-gc-time)
              (->string major-gc-elapsed-time))
+     (format "Incremental :~a collections, ~ams, ~ams elapsed\n"
+             (->string num-incremental) (->string inc-gc-time)
+             (->string inc-gc-elapsed-time))
      "\n"
      (format "INIT  time~a ms\n"
              (->string startup-time 10))

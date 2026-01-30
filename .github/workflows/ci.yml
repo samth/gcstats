@@ -19,5 +19,7 @@ jobs:
           version: ${{ matrix.racket-version }}
       - name: Install package
         run: raco pkg install --auto --name gcstats
+      - name: Check package dependencies
+        run: raco setup --check-pkg-deps --pkgs gcstats
       - name: Run tests
         run: raco test gcstats

@@ -110,6 +110,12 @@
 
     (define alloc-rate (* 1000. #|time in ms|# (/ allocated mut-time)))
 
+    (define (format-gen name num time elapsed)
+      (if (> num 0)
+          (format "~a:~a collections, ~ams, ~ams elapsed\n"
+                  name (->string num) (->string time) (->string elapsed))
+          ""))
+
     (string-append
      (format "~a bytes allocated in the heap\n" (->string allocated 15))
      (format "~a bytes collected by GC\n" (->string collected 15))
@@ -117,15 +123,9 @@
      (format "~a bytes max slop\n" (->string max-slop 15))
      (format "~a bytes peak total memory use\n" (->string max-used 15))
      "\n"
-     (format "Generation 0:~a collections, ~ams, ~ams elapsed\n"
-             (->string num-minor) (->string minor-gc-time)
-             (->string minor-gc-elapsed-time))
-     (format "Generation 1:~a collections, ~ams, ~ams elapsed\n"
-             (->string num-major) (->string major-gc-time)
-             (->string major-gc-elapsed-time))
-     (format "Incremental :~a collections, ~ams, ~ams elapsed\n"
-             (->string num-incremental) (->string inc-gc-time)
-             (->string inc-gc-elapsed-time))
+     (format-gen "Generation 0" num-minor minor-gc-time minor-gc-elapsed-time)
+     (format-gen "Generation 1" num-major major-gc-time major-gc-elapsed-time)
+     (format-gen "Incremental " num-incremental inc-gc-time inc-gc-elapsed-time)
      "\n"
      (format "INIT  time~a ms\n"
              (->string startup-time 10))
